@@ -1,4 +1,4 @@
-import { ActivityIndicator, StyleSheet } from 'react-native';
+import { ActivityIndicator, StyleSheet, Image } from 'react-native';
 
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
@@ -42,8 +42,17 @@ export default function TabTwoScreen() {
         />
       }>
       <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">{user?.username || 'Usuario'}</ThemedText>
-        <ThemedText>{user?.email || 'sin correo'}</ThemedText>
+        <ThemedView style={styles.profileSection}>
+          <Image
+            source={{ uri: user?.foto_perfil || 'https://i.pinimg.com/736x/f2/15/41/f21541d5d59eceb63be66d5f5eb6d42c.jpg' }}
+            style={{ width: 100, height: 100, borderRadius: 100 }}
+          />
+          <ThemedView>
+            <ThemedText type="title">{user?.username || 'Usuario'}</ThemedText> {/* el ? es intenta acceder a la propiedad*/}
+            <ThemedText type='subtitle'>{user?.rol_nombre || 'Rol no encontrado'}</ThemedText>
+            <ThemedText>{user?.email || 'sin correo'}</ThemedText>
+          </ThemedView>
+        </ThemedView>
       </ThemedView>
     </ParallaxScrollView>
   );
@@ -60,4 +69,9 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     gap: 8,
   },
+  profileSection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 20
+  }
 });
