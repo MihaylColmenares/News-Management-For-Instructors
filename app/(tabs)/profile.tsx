@@ -1,29 +1,42 @@
-import { ActivityIndicator, StyleSheet, Image } from 'react-native';
+import { ActivityIndicator, StyleSheet, Image, Pressable } from 'react-native';
 
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { IconSymbol } from '@/components/ui/IconSymbol';
+import { useFocusEffect } from '@react-navigation/native';
+import { useCallback } from 'react';
 import { useEffect, useState } from 'react';
-import { fetchUserProfile } from '@/api/usuarios.api';
+import { Link } from 'expo-router';
+import { getToken, getUserData } from '@/api/usuarios.api';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function TabTwoScreen() {
   const [user, setUser] = useState<any>(null)
   const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    const loadUserProfile = async () => {
-      try {
-        const data = await fetchUserProfile();
-        setUser(data);
-      } catch (error) {
-        console.log('Error cargando el perfil', error)
-      } finally {
-        setLoading(false);
-      }
-    }
-    loadUserProfile();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      const loadUserProfile = async () => {
+        try {
+          const token = await getToken();
+          if (!token) {
+            console.log("No se encontró un token, redirigiendo...");
+            setLoading(false);
+            return;
+          }
+          const data = await getUserData(token);
+          setUser(data);
+        } catch (error) {
+          console.log('Error cargando el perfil', error);
+        } finally {
+          setLoading(false);
+        }
+      };
+  
+      loadUserProfile();
+    }, [])
+  );
+  
 
 
   if (loading) {
@@ -44,8 +57,8 @@ export default function TabTwoScreen() {
       <ThemedView style={styles.titleContainer}>
         <ThemedView style={styles.profileSection}>
           <Image
-            source={{ uri: user?.foto_perfil || 'https://i.pinimg.com/736x/f2/15/41/f21541d5d59eceb63be66d5f5eb6d42c.jpg' }}
-            style={{ width: 100, height: 100, borderRadius: 100 }}
+            source={{ uri: `http://192.168.1.77:8000/${user?.foto_perfil}`}}
+            style={{ width: 100, height: 100, borderRadius: 100, backgroundColor: '#333' }}
           />
           <ThemedView>
             <ThemedText type="title">{user?.username || 'Usuario'}</ThemedText> {/* el ? es intenta acceder a la propiedad*/}
@@ -53,6 +66,11 @@ export default function TabTwoScreen() {
             <ThemedText>{user?.email || 'sin correo'}</ThemedText>
           </ThemedView>
         </ThemedView>
+        <Link href='/editProfile' asChild>
+            <Pressable style={styles.editProfileBtn}>
+              <ThemedText>Editar perfil</ThemedText>
+            </Pressable>
+          </Link>
       </ThemedView>
     </ParallaxScrollView>
   );
@@ -72,6 +90,13 @@ const styles = StyleSheet.create({
   profileSection: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 20
+    gap: 10,
+    fontWeight: 'bold',
+  },
+  editProfileBtn: {
+    backgroundColor: '#00af00',
+    padding: 10,
+    borderRadius: 30,
+    alignItems: 'center'
   }
 });

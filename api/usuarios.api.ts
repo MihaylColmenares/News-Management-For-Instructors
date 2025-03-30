@@ -11,7 +11,7 @@ export const loginUser = async (username: string, password: string) => {
             password
         });
         // Guardar el token en AsyncStorage (opcional)
-        await AsyncStorage.setItem('authToken', response.data.token);
+        await AsyncStorage.setItem('token', response.data.token);
         // await AsyncStorage.setItem('token', response.data.token);
 
         return response.data
@@ -20,31 +20,70 @@ export const loginUser = async (username: string, password: string) => {
     }
 };
 
+
+export const getToken = async () => {
+    try {
+        const token = await AsyncStorage.getItem('token');
+        return token;
+    } catch (error: any){
+        throw 'al obtener el token servidor';
+    }
+}
+
 // 📌 Función para obtener los datos del usuario autenticado
 export const getUserData = async (token: string) => {
     try {
-        const response = await axios.get(`${API_URL}/me/`, {
+        const response = await axios.get(`${API_URL}/profile/`, {
             headers: {
-                Authorization: `Bearer ${token}`
+                Authorization: `Token ${token}`
             }
         });
 
         return response.data;
     } catch (error: any) {
+        console.error("Error al obtener datos del usuario:", error.response?.data || error.message);
         throw error.response?.data?.error || 'Error al obtener los datos';
     }
 };
 
-export const fetchUserProfile = async () => {
+
+export const updateUserData = async (token: string, updatedData: any) => {
     try {
-        const token = await AsyncStorage.getItem('authToken');
-        if (!token) throw 'No hay token disponible';
+        const response = await axios.put(`${API_URL}/profile/update/`, updatedData, {
+            headers: {
+                Authorization: `Token ${token}`,
+                'Content-Type': 'application/json',
+            },
+        });
 
-        const userData = getUserData(token);
-        return userData;
-
+        return response.data;
     } catch (error: any) {
-        console.log('Error al obtener el perfil:', error);
-        throw error;
+        console.error('Error al actualizar usuario:', error.response?.data || error.message);
+        throw error.response?.data || 'Error al actualizar usuario';
     }
-}
+};
+
+
+export const updateProfilePhoto = async (imageUri: string, token: string) => {
+    try {
+
+        const formData = new FormData();
+        formData.append('foto_perfil', {
+            uri: imageUri,
+            name: 'profile.jpg',
+            type: 'image/jpeg',
+        } as any); // 👈 Esto evita el error de TypeScript
+
+        const response = await axios.put(`${API_URL}/profile/update-photo/`, formData, {
+            headers: {
+                Authorization: `Token ${token}`,
+                'Content-Type': 'multipart/form-data',
+            },
+        });
+
+        return response.data;
+    } catch (error: any) {
+        console.error('Error al actualizar foto de perfil:', error.response?.data || error.message);
+        throw error.response?.data || 'Error al actualizar la foto de perfil';
+    }
+};
