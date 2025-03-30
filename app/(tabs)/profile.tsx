@@ -61,7 +61,7 @@ export default function TabTwoScreen() {
             style={{ width: 100, height: 100, borderRadius: 100, backgroundColor: '#333' }}
           />
           <ThemedView>
-            <ThemedText type="title">{user?.username || 'Usuario'}</ThemedText> {/* el ? es intenta acceder a la propiedad*/}
+            <ThemedText type="title">{user?.first_name || 'Usuario'}</ThemedText> {/* el ? es intenta acceder a la propiedad*/}
             <ThemedText type='subtitle'>{user?.rol_nombre || 'Rol no encontrado'}</ThemedText>
             <ThemedText>{user?.email || 'sin correo'}</ThemedText>
           </ThemedView>
