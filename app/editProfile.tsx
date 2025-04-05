@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, Button, Image, StyleSheet, ActivityIndicator, Alert, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, Button, Image, StyleSheet, ActivityIndicator, Alert, TouchableOpacity, useColorScheme } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
 import * as ImagePicker from 'expo-image-picker';
 import { getUserData, updateUserData, updateProfilePhoto, getToken } from '@/api/usuarios.api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function EditProfileScreen() {
+    const theme = useColorScheme();
     const [loading, setLoading] = useState(true);
     const [profilePhoto, setProfilePhoto] = useState<string | null>(null);
 
@@ -103,29 +104,28 @@ export default function EditProfileScreen() {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Editar Perfil</Text>
             <Image source={{ uri: profilePhoto || 'https://i.pinimg.com/736x/f2/15/41/f21541d5d59eceb63be66d5f5eb6d42c.jpg' }} style={styles.profileImage} />
             <TouchableOpacity style={styles.button} onPress={handleUpdateProfilePhoto}>
                 <Text style={{color: '#fff'}}>Cambiar foto</Text>
             </TouchableOpacity>
 
             <Controller control={control} name="username" render={({ field }) => (
-                <TextInput style={styles.input} placeholder="Nombre de usuario" value={field.value} onChangeText={field.onChange} />
+                <TextInput style={[styles.input, theme === 'dark' ? styles.darkInput : styles.lightInput]} placeholder="Nombre de usuario" value={field.value} onChangeText={field.onChange} />
             )} />
             <Controller control={control} name="email" render={({ field }) => (
-                <TextInput style={styles.input} placeholder="Correo" keyboardType="email-address" value={field.value} onChangeText={field.onChange} />
+                <TextInput style={[styles.input, theme === 'dark' ? styles.darkInput : styles.lightInput]} placeholder="Correo" keyboardType="email-address" value={field.value} onChangeText={field.onChange} />
             )} />
             <Controller control={control} name="first_name" render={({ field }) => (
-                <TextInput style={styles.input} placeholder="Nombre" value={field.value} onChangeText={field.onChange} />
+                <TextInput style={[styles.input, theme === 'dark' ? styles.darkInput : styles.lightInput]} placeholder="Nombre" value={field.value} onChangeText={field.onChange} />
             )} />
             <Controller control={control} name="last_name" render={({ field }) => (
-                <TextInput style={styles.input} placeholder="Apellido" value={field.value} onChangeText={field.onChange} />
+                <TextInput style={[styles.input, theme === 'dark' ? styles.darkInput : styles.lightInput]} placeholder="Apellido" value={field.value} onChangeText={field.onChange} />
             )} />
             <Controller control={control} name="num_doc" render={({ field }) => (
-                <TextInput style={styles.input} placeholder="Número de documento" keyboardType="numeric" value={field.value} onChangeText={field.onChange} />
+                <TextInput style={[styles.input, theme === 'dark' ? styles.darkInput : styles.lightInput]} placeholder="Número de documento" keyboardType="numeric" value={field.value} onChangeText={field.onChange} />
             )} />
             <Controller control={control} name="ficha" render={({ field }) => (
-                <TextInput style={styles.input} placeholder="Ficha" value={field.value} onChangeText={field.onChange} />
+                <TextInput style={[styles.input, theme === 'dark' ? styles.darkInput : styles.lightInput]} placeholder="Ficha" value={field.value} onChangeText={field.onChange} />
             )} />
 
             <TouchableOpacity style={styles.button} onPress={handleSubmit(handleUpdate)}>
@@ -137,10 +137,23 @@ export default function EditProfileScreen() {
 }
 
 const styles = StyleSheet.create({
+    darkText: {
+        color: '#fff'
+    },
+    lightText: {
+        color: '#000'
+    },
+    darkInput: {
+        borderColor: '#fff',
+        color: '#fff'
+    },
+    lightInput: {
+        borderBlockColor: '#000',
+        color: '#000'
+    },
     container: {
         flex: 1,
         padding: 20,
-        backgroundColor: '#fff',
     },
     title: {
         fontSize: 24,

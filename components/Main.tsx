@@ -2,7 +2,9 @@ import { loginUser } from '@/api/usuarios.api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Link, router, Stack } from 'expo-router';
 import { useState } from 'react';
-import { StyleSheet, View, Text, TextInput, useColorScheme, Pressable, Alert } from 'react-native';
+import React = require('react');
+import { StyleSheet, View, Text, TextInput, useColorScheme, Pressable, Alert, TouchableOpacity,  } from 'react-native';
+import { FontAwesome5 } from '@expo/vector-icons';
 
 
 
@@ -43,10 +45,14 @@ function Main() {
     return (
         <View style={style.container}>
             {/* esto se mete en un array y se muestra los estilos del titulo + estilos segun el tema del dispositivo*/}
-            <Text style={[style.title, theme == 'dark' ? style.darkText : style.lightText]}>News Management</Text>
+            <TouchableOpacity onPress={() => router.replace("/")} style={[style.buttonRegresar]}>
+                <FontAwesome5 name="arrow-left" size={20} color="#black" style={theme == 'dark' ? style.darkText : style.lightText}/>
+                <Text style={[style.textoVolver, theme == 'dark' ? style.darkText : style.lightText]}> Volver </Text>
+            </TouchableOpacity>
+            <Text style={[style.title, theme == 'dark' ? style.darkText : style.lightText]}>Ingresa a News Management</Text>
             <View style={style.inputsContainer}>
-                <View >
-                    <Text style={[theme == 'dark' ? style.darkText : style.lightText]}>Username</Text>
+                <View>
+                    <Text style={[theme == 'dark' ? style.darkText : style.lightText]}>Username:</Text>
                     <TextInput
                         style={[style.input, theme === 'dark' ? style.darkInput : style.lightInput]}
                         placeholder='Ingrese un usuario'
@@ -56,7 +62,7 @@ function Main() {
                     />
                 </View>
                 <View>
-                    <Text style={[theme == 'dark' ? style.darkText : style.lightText]}>Password</Text>
+                    <Text style={[theme == 'dark' ? style.darkText : style.lightText]}>Password:</Text>
                     <TextInput
                         style={[style.input, theme === 'dark' ? style.darkInput : style.lightInput]}
                         placeholder='Ingrese un usuario'
@@ -74,10 +80,15 @@ function Main() {
                     ]}
                     disabled={loading}
                 >
-                    <Text style={style.darkText}>{loading ? 'Cargando...' : 'Ingresar'}</Text>
+                    <Text style={style.darkText}>{loading ? 'Cargando...' : 'Iniciar Sesión'}</Text>
                 </Pressable>
             </View>
-
+            <View style={style.boxRegister}>
+                <Text style={theme == 'dark' ? style.darkText : style.lightText}>¿No tienes una cuenta?</Text>
+                <TouchableOpacity onPress={() => router.push("/register")}>
+                    <Text style={[style.textRegister, theme == 'dark' ? style.darkText : style.lightText]}>Registrate Aquí</Text>
+                </TouchableOpacity>
+            </View>
 
             <Stack.Screen
                 options={{
@@ -89,32 +100,11 @@ function Main() {
 }
 
 const style = StyleSheet.create({
-    container: {
-        marginTop: 120,
-        alignItems: 'center',
-        gap: 120,
-    },
-    title: {
-        fontSize: 28,
-        color: '#fff',
-    },
     darkText: {
         color: '#fff'
     },
     lightText: {
         color: '#000'
-    },
-    inputsContainer: {
-        gap: 35,
-    },
-    input: {
-        height: 40,
-        width: 300,
-        margin: 12,
-        borderWidth: 1,
-        borderRadius: 30,
-        padding: 10,
-        textAlign: 'center'
     },
     darkInput: {
         borderColor: '#fff',
@@ -124,12 +114,52 @@ const style = StyleSheet.create({
         borderBlockColor: '#000',
         color: '#000'
     },
-    button: {
-        backgroundColor: '#00af00',
+    container: {
+        flex: 1,
+        justifyContent: 'center',
+        alignContent: 'center',
+        padding: 30,
+        gap: 20,
+    },
+    buttonRegresar:{
+        display: 'flex',
+        flexDirection: 'row',
         alignItems: 'center',
+    },
+    textoVolver:{
+        fontSize: 18,
+        fontWeight: 'bold'
+    },
+    title: {
+        fontSize: 24,
+        color: '#fff',
+        fontWeight: 'bold',
+        textAlign: 'center',
+    },
+    inputsContainer: {
+        gap: 35,
+    },
+    input: {
+        borderWidth: 1,
+        padding: 13,
+        borderColor: '#ccc',
+        borderRadius: 5,
+    },
+    button: {
+        backgroundColor: '#00AF00',
         padding: 10,
-        borderRadius: 30,
-    }
+        borderRadius: 10,
+        alignItems: 'center',
+    },
+    boxRegister:{
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        gap:6,
+    },
+    textRegister: {
+        fontWeight: 'bold',
+    },
 });
 
 export default Main

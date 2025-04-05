@@ -1,7 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 
-const API_URL = 'http://192.168.1.77:8000/users'; // activar el server local en la api para que funcione
+const API_URL = 'http://192.168.80.18:8000/users'; // activar el server local en la api para que funcione
 
 // funcion para hacer log in
 export const loginUser = async (username: string, password: string) => {

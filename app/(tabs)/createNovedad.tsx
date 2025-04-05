@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Button, Image, TouchableOpacity, Alert, StyleSheet } from 'react-native';
+import { View, Text, TextInput, Button, Image, TouchableOpacity, Alert, StyleSheet, useColorScheme } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
 import * as ImagePicker from 'expo-image-picker';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -10,6 +10,7 @@ import { obtenerAmbientes } from '@/api/novedades.api'; // API para obtener ambi
 import { getToken } from '@/api/usuarios.api';
 
 const CrearNovedadScreen = () => {
+  const theme = useColorScheme();
   const [imagen, setImagen] = useState<string | null>(null);
   const [ambientes, setAmbientes] = useState<{ id: number; sede: string; numero: string }[]>([]);
   const [ambienteSeleccionado, setAmbienteSeleccionado] = useState<number | null>(null);
@@ -105,13 +106,14 @@ const CrearNovedadScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.label}>Título:</Text>
+      <Text style={[styles.title, theme == 'dark' ? styles.darkText : styles.lightText]}>Datos de la Novedad de Ambiente</Text>
+      <Text style={[styles.label, theme == 'dark' ? styles.darkText : styles.lightText]}>Título:</Text>
       <Controller
         control={control}
         name="titulo"
         render={({ field: { onChange, onBlur, value } }) => (
           <TextInput
-            style={[styles.input, errors.titulo && styles.inputError]}
+            style={[styles.input, errors.titulo && styles.inputError, theme == 'dark' ? styles.darkText : styles.lightText]}
             onChangeText={onChange}
             onBlur={onBlur}
             value={value}
@@ -120,13 +122,13 @@ const CrearNovedadScreen = () => {
       />
       {errors.titulo && <Text style={styles.errorText}>{errors.titulo.message}</Text>}
 
-      <Text style={styles.label}>Descripción:</Text>
+      <Text style={[styles.label, theme == 'dark' ? styles.darkText : styles.lightText]}>Descripción:</Text>
       <Controller
         control={control}
         name="descripcion"
         render={({ field: { onChange, onBlur, value } }) => (
           <TextInput
-            style={[styles.input, styles.textArea, errors.descripcion && styles.inputError]}
+            style={[styles.input, styles.textArea, errors.descripcion && styles.inputError, theme == 'dark' ? styles.darkText : styles.lightText]}
             multiline
             numberOfLines={4}
             onChangeText={onChange}
@@ -137,23 +139,26 @@ const CrearNovedadScreen = () => {
       />
       {errors.descripcion && <Text style={styles.errorText}>{errors.descripcion.message}</Text>}
 
-      <Text style={styles.label}>Selecciona un ambiente:</Text>
+      <Text style={[styles.label, theme == 'dark' ? styles.darkText : styles.lightText]}>Selecciona un ambiente:</Text>
       <Controller
         control={control}
         name="ambiente"
         render={({ field: { onChange, value } }) => (
-            <Picker
+          <View style={styles.pickerContainer}>
+            <Picker 
             selectedValue={value ?? undefined} // Asegura que no sea null
             onValueChange={(itemValue) => {
                 onChange(itemValue); // Actualiza React Hook Form
                 setAmbienteSeleccionado(itemValue); // También actualiza el estado local
             }}
+            style={[styles.picker]}
             >
-            <Picker.Item label="Seleccione un ambiente" value={undefined} />
+            <Picker.Item label="Seleccione un ambiente" value={undefined} style={theme == 'dark' ? styles.darkText : styles.lightText} />
             {ambientes.map((ambiente) => (
-                <Picker.Item key={ambiente.id} label={`${ambiente.sede } (${ambiente.numero})`} value={ambiente.id} />
+                <Picker.Item key={ambiente.id} label={`${ambiente.sede } (${ambiente.numero})`} value={ambiente.id} style={[styles.picker]}/>
             ))}
             </Picker>
+            </View>
         )}
         />
       {errors.ambiente && <Text style={styles.errorText}>{errors.ambiente.message}</Text>}
@@ -177,23 +182,39 @@ const CrearNovedadScreen = () => {
 
 // 🎨 Estilos
 const styles = StyleSheet.create({
+  darkText: {
+    color: '#fff'
+  },
+  lightText: {
+      color: '#000'
+  },
+  darkInput: {
+      borderColor: '#fff',
+      color: '#fff'
+  },
+  lightInput: {
+      borderBlockColor: '#000',
+      color: '#000'
+  },
   container: {
+    marginTop: 33,
     padding: 20,
-    backgroundColor: '#f4f4f4',
     flex: 1,
+    gap: 14,
+  },
+  title:{
+    fontSize: 26,
+    textAlign: 'center',
   },
   label: {
     fontSize: 16,
     fontWeight: 'bold',
-    marginBottom: 5,
   },
   input: {
     borderWidth: 1,
     borderColor: '#ccc',
     padding: 10,
     borderRadius: 5,
-    backgroundColor: '#fff',
-    marginBottom: 10,
   },
   inputError: {
     borderColor: 'red',
@@ -201,47 +222,51 @@ const styles = StyleSheet.create({
   errorText: {
     color: 'red',
     fontSize: 12,
-    marginBottom: 10,
   },
   textArea: {
     height: 100,
     textAlignVertical: 'top',
   },
-  picker: {
+  pickerContainer: {
     borderWidth: 1,
     borderColor: '#ccc',
-    backgroundColor: '#fff',
     borderRadius: 5,
-    marginBottom: 10,
+    paddingHorizontal: 10,
+  },
+  picker: {
+    padding: 1,
+    borderRadius: 5,
   },
   imageButton: {
-    backgroundColor: '#00af00',
+    backgroundColor: '#00AF00',
     padding: 10,
-    borderRadius: 5,
+    borderRadius: 10,
     alignItems: 'center',
-    marginBottom: 10,
+    marginTop: 10,
   },
   imageButtonText: {
-    color: '#fff',
+    color: 'white',
+    fontWeight: 'bold',
     fontSize: 14,
   },
   imagePreview: {
     width: 100,
     height: 100,
-    marginBottom: 10,
     alignSelf: 'center',
   },
   button: {
-    backgroundColor: '#28a745',
-    padding: 12,
-    borderRadius: 5,
+    backgroundColor: '#00AF00',
+    padding: 10,
+    borderRadius: 10,
     alignItems: 'center',
+    marginTop: 10,
   },
   buttonDisabled: {
     backgroundColor: '#ccc',
   },
   buttonText: {
-    color: '#fff',
+    color: 'white',
+    fontWeight: 'bold',
     fontSize: 16,
   },
 });

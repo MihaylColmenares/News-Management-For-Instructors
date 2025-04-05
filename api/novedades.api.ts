@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-const API_URL_NOVEDADES = 'http://192.168.1.77:8000/users/novedades'; 
-const API_URL_AMBIENTE = 'http://192.168.1.77:8000/users';// Reemplaza con la URL real de tu API
+const API_URL_NOVEDADES = 'http://192.168.80.18:8000/users/novedades'; 
+const API_URL_AMBIENTE = 'http://192.168.80.18:8000/users';// Reemplaza con la URL real de tu API
 
 export const crearNovedad = async (formData: any, token: string) => {
   try {
